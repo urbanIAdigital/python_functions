@@ -73,7 +73,8 @@ def get_projects_list():
     return projects_data
 
 # project_id = "b.07de680e-32d8-4411-acaa-3ab60c0b1a02"
-folder_id = "urn:adsk.wipprod:fs.folder:co.acSfkHVVRUubjgp_Tb0WGA"
+# folder_id = "urn:adsk.wipprod:fs.folder:co.acSfkHVVRUubjgp_Tb0WGA"
+folder_id = "urn:adsk.wipprod:fs.folder:co.7iJNMTVJQvGug9-Q5ln6Tw"
 
 def get_folders_list():
     hub_id = get_projects_hub()
@@ -97,19 +98,21 @@ def get_content_folder():
     save_data.save_projects_data(contents, "contents", "json")
     return contents
 
-get_content_folder()
+# get_content_folder()
 
     
 
 item_id = "urn:adsk.wipprod:dm.lineage:7Vmj1aF7RniLgiwv357NRw"
+# item_id = "urn:adsk.wipprod:fs.file:vf.jFajsjt_RKqBMOIizvTaqA"
 
 def get_item_details():
     project_id = get_project_id_by_name(constants.project_name)
     tip_url = f"https://developer.api.autodesk.com/data/v1/projects/{project_id}/items/{item_id}/tip"
     response = requests.get(tip_url, headers=headers)
+    print(response.json())
     tip_data = response.json()["data"]
-    print(json.dumps(response.json(), indent=2))
-    version_id = tip_data["id"]
+    # print(json.dumps(response.json(), indent=2))
+    version_id = "urn:adsk.wipprod:fs.file:vf.jFajsjt_RKqBMOIizvTaqA?version=1"
     encoded_version_id = urllib.parse.quote(version_id, safe="")
 
     print(f"Version ID: {encoded_version_id}")
@@ -127,7 +130,7 @@ def get_item_details():
             download_url = version_data["relationships"]["storage"]["meta"]["link"]["href"]
             file_response = requests.get(download_url, headers=headers)
             if file_response.status_code == 200:
-                filename = "ConsultaSeven_20240910.geojson"
+                filename = "proyect1.mpp"
                 with open(filename, "wb") as file:
                     file.write(file_response.content)
                 print(f"Archivo '{filename}' descargado con éxito.")
@@ -139,4 +142,68 @@ def get_item_details():
         else:
             print("No se pudo encontrar el enlace de descarga en los datos de la versión.")
             print(version_data)
+get_item_details()
+
+def get_file_versions(project_id, item_id, access_token):
+    versions_url = f"https://developer.api.autodesk.com/data/v1/projects/{project_id}/items/{item_id}/versions"
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+    
+    response = requests.get(versions_url, headers=headers)
+    
+    if response.status_code == 200:
+        versions_data = response.json()
+        return versions_data.get('data', [])
+    else:
+        print(f"Error al obtener las versiones: {response.status_code}")
+        print(response.text)
+        return []
+
+# Ejemplo de uso
+# project_id = "b.07de680e-32d8-4411-acaa-3ab60c0b1a02"
+# item_id = "urn:adsk.wipprod:dm.lineage:jFajsjt_RKqBMOIizvTaqA"
+
+# versions = get_file_versions(project_id, item_id, access_token)
+# save_data.save_projects_data(versions, "versions_file", "json")
+
+
+# for version in versions:
+#     print(f"Versión: {version['attributes']['versionNumber']}")
+#     print(f"Creada por: {version['attributes']['createUserName']}")
+#     print(f"Fecha de creación: {version['attributes']['createTime']}")
+#     print(f"ID de versión: {version['id']}")
+#     print("---")
+
+# Datos del archivo
+project_id = "b.07de680e-32d8-4411-acaa-3ab60c0b1a02"
+item_id = "urn:adsk.wipprod:dm.lineage:jFajsjt_RKqBMOIizvTaqA"
+version_id = "urn:adsk.wipprod:fs.file:vf.jFajsjt_RKqBMOIizvTaqA?version=5"  # Versión del archivo
+
+# 1. Codificar el URN correctamente
+encoded_version_id = urllib.parse.quote(version_id, safe='')
+
+# 2. Obtener la versión actual del archivo
+version_url = f"https://developer.api.autodesk.com/data/v1/projects/{project_id}/versions/{encoded_version_id}"
+
+response = requests.get(version_url, headers=headers)
+print(response.json())
+if response.status_code == 200:
+    version_data = response.json()
+
+    # 3. Extraer el storageId del archivo
+    storage_id = version_data["data"]["relationships"]["storage"]["data"]["id"]
+
+    # 4. Obtener la URL de descarga usando el storageId
+    download_url = f"https://developer.api.autodesk.com/oss/v2/buckets/wip.dm.prod/objects/{storage_id}"
+    download_response = requests.get(download_url, headers=headers)
+
+    # 5. Guardar el archivo descargado
+    filename = version_data["data"]["attributes"]["fileName"]
+    with open(filename, "wb") as file:
+        file.write(download_response.content)
+
+    print(f"Archivo {filename} descargado con éxito.")
+else:
+    print(f"Error: {response.json()}")
 
