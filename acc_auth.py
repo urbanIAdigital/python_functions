@@ -41,6 +41,7 @@ def get_projects_hub():
     projects = response.json()
     print(f" hubs en ACC {projects["data"][0]["id"]}")
     return projects["data"][0]["id"]
+get_projects_hub()
 
 def simplify_json(json_data):
 
@@ -174,36 +175,4 @@ def get_file_versions(project_id, item_id, access_token):
 #     print(f"Fecha de creación: {version['attributes']['createTime']}")
 #     print(f"ID de versión: {version['id']}")
 #     print("---")
-
-# Datos del archivo
-project_id = "b.07de680e-32d8-4411-acaa-3ab60c0b1a02"
-item_id = "urn:adsk.wipprod:dm.lineage:jFajsjt_RKqBMOIizvTaqA"
-version_id = "urn:adsk.wipprod:fs.file:vf.jFajsjt_RKqBMOIizvTaqA?version=5"  # Versión del archivo
-
-# 1. Codificar el URN correctamente
-encoded_version_id = urllib.parse.quote(version_id, safe='')
-
-# 2. Obtener la versión actual del archivo
-version_url = f"https://developer.api.autodesk.com/data/v1/projects/{project_id}/versions/{encoded_version_id}"
-
-response = requests.get(version_url, headers=headers)
-print(response.json())
-if response.status_code == 200:
-    version_data = response.json()
-
-    # 3. Extraer el storageId del archivo
-    storage_id = version_data["data"]["relationships"]["storage"]["data"]["id"]
-
-    # 4. Obtener la URL de descarga usando el storageId
-    download_url = f"https://developer.api.autodesk.com/oss/v2/buckets/wip.dm.prod/objects/{storage_id}"
-    download_response = requests.get(download_url, headers=headers)
-
-    # 5. Guardar el archivo descargado
-    filename = version_data["data"]["attributes"]["fileName"]
-    with open(filename, "wb") as file:
-        file.write(download_response.content)
-
-    print(f"Archivo {filename} descargado con éxito.")
-else:
-    print(f"Error: {response.json()}")
 
