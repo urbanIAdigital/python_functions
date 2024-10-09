@@ -3,4 +3,4 @@
 /*.json
 /*.geojson
 /*.mpp
-./venv
+.venv
