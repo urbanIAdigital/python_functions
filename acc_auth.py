@@ -41,7 +41,7 @@ def get_projects_hub():
     projects = response.json()
     print(f" hubs en ACC {projects["data"][0]["id"]}")
     return projects["data"][0]["id"]
-get_projects_hub()
+# get_projects_hub()
 
 def simplify_json(json_data):
 
@@ -89,7 +89,7 @@ def get_folders_list():
         return folders_data
     else:
         print(f"Error: {response.status_code} - {response.text}")
-# get_folders_list()
+get_folders_list()
    
 def get_content_folder():
     project_id = get_project_id_by_name(constants.project_name)
@@ -143,7 +143,7 @@ def get_item_details():
         else:
             print("No se pudo encontrar el enlace de descarga en los datos de la versión.")
             print(version_data)
-get_item_details()
+# get_item_details()
 
 def get_file_versions(project_id, item_id, access_token):
     versions_url = f"https://developer.api.autodesk.com/data/v1/projects/{project_id}/items/{item_id}/versions"
