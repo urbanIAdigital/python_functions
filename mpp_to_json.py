@@ -51,6 +51,7 @@ if not os.path.exists(ruta_salida_csv):
 # Función recursiva para recorrer tareas y subtareas
 def recorrer_tareas(tarea, nivel, escritor_csv):
     # Obtener los datos de la tarea
+    print(tarea)
     nombre_tarea = tarea.name
     codigo_bim = obtener_valor_campo_personalizado(tarea, "CUSTOM_FIELD_1")
     unidad = obtener_valor_campo_personalizado(tarea, "UNITS")
