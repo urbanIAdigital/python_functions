@@ -24,7 +24,7 @@ def ver_atributos_tarea(tarea):
     # Imprimir los campos personalizados (extended_attributes)
     print("Campos personalizados:")
     for atributo in tarea.extended_attributes:
-        print(f"{atributo.attribute_definition.field_name}: {atributo.value}")
+        print(f"{atributo.attribute_definition.field_name}: {atributo}")
 
 
 # Función recursiva para recorrer tareas y subtareas
@@ -34,21 +34,23 @@ def recorrer_tareas(tarea, nivel, escritor_csv):
 
     # Obtener los datos de la tarea
     nombre_tarea = tarea.name
-    codigo_bim = obtener_valor_campo_personalizado(
-        tarea, "Text2"
-    )  # Usar "Text2" como Código BIM
+    codigo_bim = obtener_valor_campo_personalizado(tarea, "Text2")
     unidad = obtener_valor_campo_personalizado(tarea, "UNITS")
     cantidad_ejecutada = tarea.actual_work  # Cantidad ejecutada
     cantidad_programada = tarea.work  # Cantidad programada
     porcentaje_completado = tarea.percent_complete  # % Completado
     comienzo_real = tarea.actual_start  # Comienzo real
     fin_real = tarea.actual_finish  # Fin real
-    duracion_real = tarea.duration  # Duración real
-    porcentaje_financiero_ejecutado = tarea.cost  # % Financiero ejecutado
-    desviacion = tarea.cost_variance  # Desviación
-
-    # Nuevas columnas
-    porcentaje_programado = tarea.percent_work_complete  # % Programado
+    duracion_real = tarea.actual_duration  # Duración real
+    porcentaje_financiero_ejecutado = obtener_valor_campo_personalizado(
+        tarea, "Text6"
+    )  # % Financiero ejecutado
+    desviacion = obtener_valor_campo_personalizado(
+        tarea, "Text5"
+    )   # Desviación
+    porcentaje_programado = obtener_valor_campo_personalizado(
+        tarea, "Text3"
+    ) # % Programado
     variacion_finalizacion = tarea.finish_variance  # Variación de finalización
     costo_previsto = tarea.cost  # Costo previsto (puedes ajustar según lo necesites)
     costo_real = tarea.actual_cost  # Costo real
